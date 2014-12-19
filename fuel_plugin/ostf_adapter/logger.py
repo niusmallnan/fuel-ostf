@@ -23,7 +23,7 @@ def setup(log_file=None):
         "%Y-%m-%d %H:%M:%S")
     log = logging.getLogger(None)
     stream_handler = logging.StreamHandler()
-    stream_handler.setLevel(logging.INFO)
+    stream_handler.setLevel(logging.DEBUG)
     stream_handler.setFormatter(formatter)
     log.addHandler(stream_handler)
 
@@ -36,4 +36,4 @@ def setup(log_file=None):
         file_handler.setFormatter(formatter)
         log.addHandler(file_handler)
 
-    log.setLevel(logging.INFO)
+    log.setLevel(logging.DEBUG)

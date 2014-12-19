@@ -37,6 +37,8 @@ def main():
 
     ostf_config.init_config(sys.argv[1:])
 
+    os.environ['CUSTOM_FUEL_CONFIG'] = CONF.adapter.runtest_config
+
     logger.setup(log_file=CONF.adapter.log_file)
 
     log = logging.getLogger(__name__)
@@ -49,14 +51,14 @@ def main():
 
     with engine.contexted_session(CONF.adapter.dbpath) as session:
         # performing cleaning of expired data (if any) in db
-        mixins.clean_db(session)
-        log.info('Cleaned up database.')
+        #mixins.clean_db(session)
+        #log.info('Cleaned up database.')
         # discover testsets and their tests
-        CORE_PATH = CONF.debug_tests or 'fuel_health'
+        #CORE_PATH = CONF.debug_tests or 'fuel_health'
 
-        log.info('Performing nose discovery with {0}.'.format(CORE_PATH))
+        #log.info('Performing nose discovery with {0}.'.format(CORE_PATH))
 
-        nose_discovery.discovery(path=CORE_PATH, session=session)
+        #nose_discovery.discovery(path=CORE_PATH, session=session)
 
         # cache needed data from test repository
         mixins.cache_test_repository(session)

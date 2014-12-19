@@ -88,17 +88,17 @@ class OfficialClientManager(fuel_health.manager.Manager):
 
         if self.clients_initialized:
             self.volume_client = self._get_volume_client()
-            self.heat_client = self._get_heat_client()
-            self.murano_client = self._get_murano_client()
-            self.sahara_client = self._get_sahara_client()
+            #self.heat_client = self._get_heat_client()
+            #self.murano_client = self._get_murano_client()
+            #self.sahara_client = self._get_sahara_client()
             self.ceilometer_client = self._get_ceilometer_client()
             self.client_attr_names = [
                 'compute_client',
                 'identity_client',
                 'volume_client',
-                'heat_client',
-                'murano_client',
-                'sahara_client',
+                #'heat_client',
+                # 'murano_client',
+                #'sahara_client',
                 'ceilometer_client'
             ]
 
@@ -154,7 +154,6 @@ class OfficialClientManager(fuel_health.manager.Manager):
             password = self.config.identity.admin_password
         if not tenant_name:
             tenant_name = self.config.identity.admin_tenant_name
-
         if None in (username, password, tenant_name):
             msg = ("Missing required credentials for identity client. "
                    "username: %(username)s, password: %(password)s, "

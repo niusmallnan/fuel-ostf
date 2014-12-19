@@ -12,7 +12,6 @@ down_revision = None
 
 from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.dialects import postgresql
 
 from fuel_plugin.ostf_adapter.storage import fields
 
@@ -21,7 +20,7 @@ def upgrade():
     op.create_table(
         'cluster_state',
         sa.Column('id', sa.Integer(), autoincrement=False, nullable=False),
-        sa.Column('deployment_tags', postgresql.ARRAY(sa.String(length=64)),
+        sa.Column('deployment_tags', fields.ListField(length=256),
                   nullable=True),
         sa.PrimaryKeyConstraint('id')
     )
@@ -31,10 +30,10 @@ def upgrade():
         sa.Column('description', sa.String(length=256), nullable=True),
         sa.Column('test_path', sa.String(length=256), nullable=True),
         sa.Column('driver', sa.String(length=128), nullable=True),
-        sa.Column('additional_arguments', fields.ListField(), nullable=True),
+        sa.Column('additional_arguments', fields.ListField(length=256), nullable=True),
         sa.Column('cleanup_path', sa.String(length=128), nullable=True),
-        sa.Column('meta', fields.JsonField(), nullable=True),
-        sa.Column('deployment_tags', postgresql.ARRAY(sa.String(length=64)),
+        sa.Column('meta', fields.JsonField(length=512), nullable=True),
+        sa.Column('deployment_tags', fields.ListField(length=256),
                   nullable=True),
         sa.Column('test_runs_ordering_priority', sa.Integer(), nullable=True),
         sa.PrimaryKeyConstraint('id')
@@ -43,7 +42,7 @@ def upgrade():
         'cluster_testing_pattern',
         sa.Column('cluster_id', sa.Integer(), nullable=False),
         sa.Column('test_set_id', sa.String(length=128), nullable=False),
-        sa.Column('tests', postgresql.ARRAY(sa.String(length=512)),
+        sa.Column('tests', fields.JsonField(length=512),
                   nullable=True),
         sa.ForeignKeyConstraint(['cluster_id'], ['cluster_state.id'], ),
         sa.ForeignKeyConstraint(['test_set_id'], ['test_sets.id'], ),
@@ -55,7 +54,7 @@ def upgrade():
         sa.Column('status',
                   sa.Enum('running', 'finished', name='test_run_states'),
                   nullable=False),
-        sa.Column('meta', fields.JsonField(), nullable=True),
+        sa.Column('meta', fields.JsonField(length=512), nullable=True),
         sa.Column('started_at', sa.DateTime(), nullable=True),
         sa.Column('ended_at', sa.DateTime(), nullable=True),
         sa.Column('test_set_id', sa.String(length=128), nullable=True),
@@ -81,8 +80,8 @@ def upgrade():
                   nullable=True),
         sa.Column('step', sa.Integer(), nullable=True),
         sa.Column('time_taken', sa.Float(), nullable=True),
-        sa.Column('meta', fields.JsonField(), nullable=True),
-        sa.Column('deployment_tags', postgresql.ARRAY(sa.String(length=64)),
+        sa.Column('meta', fields.JsonField(length=512), nullable=True),
+        sa.Column('deployment_tags', fields.ListField(length=64),
                   nullable=True),
         sa.Column('test_run_id', sa.Integer(), nullable=True),
         sa.Column('test_set_id', sa.String(length=128), nullable=True),

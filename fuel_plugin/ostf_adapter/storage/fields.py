@@ -14,11 +14,11 @@
 
 import json
 
-from sqlalchemy.types import TypeDecorator, VARCHAR
-
+from sqlalchemy.types import TypeDecorator
+from sqlalchemy import String
 
 class JsonField(TypeDecorator):
-    impl = VARCHAR
+    impl = String
 
     def process_bind_param(self, value, dialect):
         if value is not None:

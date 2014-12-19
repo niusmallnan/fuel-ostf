@@ -12,14 +12,11 @@ down_revision = '5133b1e66258'
 
 from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.dialects import postgresql
-
+from fuel_plugin.ostf_adapter.storage import fields
 
 def upgrade():
     op.add_column('test_sets', sa.Column('exclusive_testsets',
-                                         postgresql.ARRAY(
-                                             sa.String(length=128)
-                                         ),
+                                         fields.JsonField(length=512),
                                          nullable=True))
 
 

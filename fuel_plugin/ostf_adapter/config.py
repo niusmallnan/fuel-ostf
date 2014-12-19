@@ -42,17 +42,22 @@ adapter_opts = [
     cfg.StrOpt('nailgun_port',
                default='8000',
                help=""),
+    cfg.ListOpt('default_log_levels',
+               default=[],
+               help=""),
     cfg.StrOpt('log_file',
                default='/var/log/ostf.log',
                help=""),
     cfg.BoolOpt('auth_enable',
                 default=False,
-                help="Set True to enable auth.")
-
+                help="Set True to enable auth."),
+    cfg.StrOpt('runtest_config',
+               default='/etc/fuel/test.conf',
+               help=""),
 ]
 
 cli_opts = [
-    cfg.BoolOpt('debug', default=False),
+    cfg.BoolOpt('debug', default=True),
     cfg.BoolOpt('after-initialization-environment-hook', default=False),
     cfg.StrOpt('debug_tests')
 ]
@@ -96,5 +101,6 @@ def init_config(args=[]):
         # No need to fail here! If config doesnot exist defaults are used
     else:
         config_files.append(path)
-
+    
+    cfg.set_defaults([],default_log_levels=cfg.CONF.adapter.default_log_levels)
     cfg.CONF(args, project='ostf', default_config_files=config_files)

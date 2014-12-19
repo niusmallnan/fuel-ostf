@@ -20,7 +20,6 @@ from sqlalchemy import desc
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import joinedload, relationship, object_mapper
-from sqlalchemy.dialects.postgres import ARRAY
 
 from fuel_plugin.ostf_adapter import nose_plugin
 from fuel_plugin.ostf_adapter.storage import fields, engine
@@ -47,7 +46,7 @@ class ClusterState(BASE):
     __tablename__ = 'cluster_state'
 
     id = sa.Column(sa.Integer, primary_key=True, autoincrement=False)
-    deployment_tags = sa.Column(ARRAY(sa.String(64)))
+    deployment_tags = sa.Column(fields.JsonField())
 
 
 class ClusterTestingPattern(BASE):
@@ -69,7 +68,7 @@ class ClusterTestingPattern(BASE):
         primary_key=True
     )
 
-    tests = sa.Column(ARRAY(sa.String(512)))
+    tests = sa.Column(fields.JsonField())
 
     test_set = relationship('TestSet')
 
@@ -85,12 +84,12 @@ class TestSet(BASE):
     additional_arguments = sa.Column(fields.ListField())
     cleanup_path = sa.Column(sa.String(128))
     meta = sa.Column(fields.JsonField())
-    deployment_tags = sa.Column(ARRAY(sa.String(64)))
+    deployment_tags = sa.Column(fields.JsonField())
     test_runs_ordering_priority = sa.Column(sa.Integer)
 
     # list of test sets that cannot be executed simultaneously
     # with current test set
-    exclusive_testsets = sa.Column(ARRAY(sa.String(128)))
+    exclusive_testsets = sa.Column(fields.JsonField())
 
     tests = relationship(
         'Test',
@@ -136,7 +135,7 @@ class Test(BASE):
     step = sa.Column(sa.Integer())
     time_taken = sa.Column(sa.Float())
     meta = sa.Column(fields.JsonField())
-    deployment_tags = sa.Column(ARRAY(sa.String(64)))
+    deployment_tags = sa.Column(fields.JsonField())
 
     test_run_id = sa.Column(
         sa.Integer(),
