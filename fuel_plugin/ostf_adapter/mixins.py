@@ -102,8 +102,10 @@ def discovery_check(session, cluster, token=None):
 
 
 def _get_cluster_depl_tags(cluster_id, token=None):
-
-    return set()
+    depl_tags = set()
+    depl_tags.update(['ubuntu','ceilometer',
+                      'additional_components','kvm'])
+    return depl_tags
 
 
 def _add_cluster_testing_pattern(session, cluster_data):
