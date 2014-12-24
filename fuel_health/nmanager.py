@@ -24,20 +24,6 @@ LOG = logging.getLogger(__name__)
 
 # Default client libs
 try:
-    import heatclient.v1.client
-except:
-    LOG.warning('Heatclient could not be imported.')
-try:
-    import muranoclient.v1.client
-except:
-    LOG.debug(traceback.format_exc())
-    LOG.warning('Muranoclient could not be imported.')
-try:
-    import saharaclient.client
-except:
-    LOG.debug(traceback.format_exc())
-    LOG.warning('Sahara client could not be imported.')
-try:
     import ceilometerclient.v2.client
 except:
     LOG.warning('Ceilometer client could not be imported.')
@@ -88,17 +74,11 @@ class OfficialClientManager(fuel_health.manager.Manager):
 
         if self.clients_initialized:
             self.volume_client = self._get_volume_client()
-            #self.heat_client = self._get_heat_client()
-            #self.murano_client = self._get_murano_client()
-            #self.sahara_client = self._get_sahara_client()
             self.ceilometer_client = self._get_ceilometer_client()
             self.client_attr_names = [
                 'compute_client',
                 'identity_client',
                 'volume_client',
-                #'heat_client',
-                # 'murano_client',
-                #'sahara_client',
                 'ceilometer_client'
             ]
 
@@ -168,67 +148,6 @@ class OfficialClientManager(fuel_health.manager.Manager):
                                                  tenant_name=tenant_name,
                                                  auth_url=auth_url,
                                                  insecure=dscv)
-
-    def _get_heat_client(self, username=None, password=None,
-                         tenant_name=None):
-        if not username:
-            username = self.config.identity.admin_username
-        if not password:
-            password = self.config.identity.admin_password
-        if not tenant_name:
-            tenant_name = self.config.identity.admin_tenant_name
-
-        keystone = self._get_identity_client(username, password, tenant_name)
-        token = keystone.auth_token
-        try:
-            endpoint = self.config.heat.endpoint + "/" + keystone.tenant_id
-        except keystoneclient.exceptions.EndpointNotFound:
-            LOG.warning('Can not initialize heat client, endpoint not found')
-            return None
-        else:
-            return heatclient.v1.client.Client(endpoint,
-                                               token=token,
-                                               username=username,
-                                               password=password)
-
-    def _get_murano_client(self):
-        """
-        This method returns Murano API client
-        """
-        # Get xAuth token from Keystone
-        self.token_id = self._get_identity_client(
-            self.config.identity.admin_username,
-            self.config.identity.admin_password,
-            self.config.identity.admin_tenant_name).auth_token
-
-        try:
-            return muranoclient.v1.client.Client(
-                endpoint=self.config.murano.api_url,
-                token=self.token_id,
-                insecure=self.config.murano.insecure)
-        except exceptions:
-            LOG.debug(traceback.format_exc())
-            LOG.warning('Can not initialize murano client')
-
-    def _get_sahara_client(self, username=None, password=None):
-        auth_url = self.config.identity.uri
-        tenant_name = self.config.identity.admin_tenant_name
-        sahara_url = self.config.sahara.api_url
-        LOG.debug('Sahara url is %s' % sahara_url)
-        if not username:
-            username = self.config.identity.admin_username
-        if not password:
-            password = self.config.identity.admin_password
-        tenant_id = [
-            tenant.id for tenant in self.identity_client.tenants.list()
-            if tenant.name == tenant_name][0]
-        return saharaclient.client.Client(self.config.sahara.api_version,
-                                          username=username,
-                                          api_key=password,
-                                          project_name=tenant_name,
-                                          auth_url=auth_url,
-                                          sahara_url="{url}/{id}".format(
-                                              url=sahara_url, id=tenant_id))
 
     def _get_ceilometer_client(self):
         keystone = self._get_identity_client()

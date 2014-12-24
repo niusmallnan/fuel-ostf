@@ -74,58 +74,6 @@ def cleanup(cluster_deployment_info):
     '''
     manager = CleanUpClientManager()
 
-    if 'sahara' in cluster_deployment_info:
-        try:
-            sahara_client = manager._get_sahara_client()
-            if sahara_client is not None:
-                _delete_it(client=sahara_client.clusters,
-                           log_message='Start sahara cluster deletion',
-                           name='ostf-test-', delete_type='id')
-                _delete_it(client=sahara_client.cluster_templates,
-                           log_message='Start sahara cluster'
-                                       ' template deletion',
-                           delete_type='id')
-                _delete_it(client=sahara_client.node_group_templates,
-                           log_message='Start sahara node'
-                                       ' group template deletion',
-                           delete_type='id')
-        except Exception:
-            LOG.warning(traceback.format_exc())
-
-    if 'murano' in cluster_deployment_info:
-        try:
-            murano_client = manager._get_murano_client()
-            compute_client = manager._get_compute_client()
-
-            if murano_client is not None:
-                endpoint = manager.config.murano.api_url + '/v1/'
-                headers = {'X-Auth-Token': murano_client.auth_token,
-                           'content-type': 'application/json'}
-                environments = requests.get(endpoint + 'environments',
-                                            headers=headers).json()
-                for e in environments["environments"]:
-                    if e['name'].startswith('ostf_test-'):
-                        try:
-                            LOG.info('Start environment deletion.')
-                            requests.delete('{0}environments/{1}'.format(
-                                endpoint, e['id']), headers=headers)
-                        except Exception:
-                            LOG.warning('Failed to delete murano environment')
-                            LOG.debug(traceback.format_exc())
-
-            if compute_client is not None:
-                flavors = compute_client.flavors.list()
-                for flavor in flavors:
-                    if 'ostf_test_Murano' in flavor.name:
-                        try:
-                            LOG.info('Start flavor deletion.')
-                            compute_client.flavors.delete(flavor.id)
-                        except:
-                            LOG.warning('Failed to delete flavor')
-                            LOG.debug(traceback.format_exc())
-
-        except Exception:
-            LOG.warning(traceback.format_exc())
 
     if 'ceilometer' in cluster_deployment_info:
         try:
@@ -143,21 +91,6 @@ def cleanup(cluster_deployment_info):
             LOG.warning(
                 'Something wrong with ceilometer client. Esception: %s', exc
             )
-
-    if 'heat' in cluster_deployment_info:
-        try:
-            heat_client = manager._get_heat_client()
-            if heat_client is not None:
-                stacks = heat_client.stacks.list()
-                for s in stacks:
-                    if s.stack_name.startswith('ost1_test-'):
-                        try:
-                            LOG.info('Start stacks deletion.')
-                            heat_client.stacks.delete(s.id)
-                        except Exception:
-                            LOG.debug(traceback.format_exc())
-        except Exception:
-            LOG.warning(traceback.format_exc())
 
     instances_id = []
     servers = manager._get_compute_client().servers.list()
