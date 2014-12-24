@@ -1,14 +1,6 @@
-fuel-ostf-tests
-===============
+东网openstack自动化测试
+=========================
 
-In order to start tests you will need to perform next commands:
-    fab unit
-    fab testall
-
-Ideally tests should be runned with tox, e.g:
-    tox -e py27
-
-    or
-
-    tox
+看这里
+http://192.168.250.3:8090/pages/viewpage.action?pageId=9765401
 
