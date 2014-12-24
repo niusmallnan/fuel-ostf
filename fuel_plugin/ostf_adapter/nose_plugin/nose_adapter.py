@@ -141,8 +141,6 @@ class NoseDriver(object):
         try:
             module_obj = __import__(cleanup, -1)
 
-            os.environ['NAILGUN_HOST'] = str(cfg.CONF.adapter.nailgun_host)
-            os.environ['NAILGUN_PORT'] = str(cfg.CONF.adapter.nailgun_port)
             os.environ['CLUSTER_ID'] = str(cluster_id)
 
             module_obj.cleanup.cleanup(cluster_deployment_info)

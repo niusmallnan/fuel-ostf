@@ -36,10 +36,6 @@ def setup_config(custom_pecan_config):
         'debug': CONF.debug,
         'debug_tests': CONF.debug_tests,
         'lock_dir': CONF.adapter.lock_dir,
-        'nailgun': {
-            'host': CONF.adapter.nailgun_host,
-            'port': CONF.adapter.nailgun_port
-        },
         'app': {
             'root': 'fuel_plugin.ostf_adapter.wsgi.root.RootController',
             'modules': ['fuel_plugin.ostf_adapter.wsgi']
